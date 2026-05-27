@@ -45,41 +45,66 @@ export const analyzePortfolio = async (portfolioData) => {
   }
 };
 
+const TWELVE_DATA_KEY = import.meta.env.VITE_TWELVE_DATA_API_KEY;
+
 export const getMarketData = async (tickers) => {
   if (!tickers || tickers.length === 0) return {};
   
   const cacheKey = `market_data_${tickers.sort().join('_')}`;
   const cached = localStorage.getItem(cacheKey);
   
-  // Cache for 5 minutes
   if (cached) {
     const { data, timestamp } = JSON.parse(cached);
-    if (Date.now() - timestamp < 5 * 60 * 1000) {
-      console.log("Using cached market data");
-      return data;
-    }
+    if (Date.now() - timestamp < 5 * 60 * 1000) return data;
   }
 
+  let marketData = {};
+
+  // 1. Fetch Real Prices from Twelve Data
+  if (TWELVE_DATA_KEY && TWELVE_DATA_KEY !== 'YOUR_KEY') {
+    try {
+      const symbols = tickers.join(',');
+      const res = await fetch(`https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${TWELVE_DATA_KEY}`);
+      const result = await res.json();
+      
+      tickers.forEach(t => {
+        const quote = tickers.length > 1 ? result[t] : result;
+        if (quote && quote.price) {
+          marketData[t] = {
+            price: parseFloat(quote.price),
+            change: parseFloat(quote.percent_change || 0),
+            sector: 'Market Asset' // Temporary
+          };
+        }
+      });
+    } catch (e) { console.warn("Twelve Data failed", e); }
+  }
+
+  // 2. Use Gemini to "Enhance" the data with Sectors and missing prices
   const prompt = `
-    Return the current market price (USD), 24h change percentage, and primary sector for the following stock tickers: ${tickers.join(', ')}.
-    Format your response as a strict JSON object where keys are tickers:
-    {
-      "TICKER": { "price": number, "change": number, "sector": "string" }
-    }
+    Return the primary sector for these tickers: ${tickers.join(', ')}. 
+    ${Object.keys(marketData).length === 0 ? "Also provide current USD prices and 24h change %." : ""}
+    Format: JSON { "TICKER": { "sector": "string", "price": number?, "change": number? } }
   `;
 
   try {
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const data = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+    const aiResult = JSON.parse((await result.response).text().match(/\{[\s\S]*\}/)[0]);
     
-    localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
-    return data;
+    // Merge AI sectors with Real prices
+    const finalData = tickers.reduce((acc, t) => ({
+      ...acc,
+      [t]: {
+        price: marketData[t]?.price || aiResult[t]?.price || 150,
+        change: marketData[t]?.change || aiResult[t]?.change || 0,
+        sector: aiResult[t]?.sector || 'Technology'
+      }
+    }), {});
+
+    localStorage.setItem(cacheKey, JSON.stringify({ data: finalData, timestamp: Date.now() }));
+    return finalData;
   } catch (error) {
-    console.error("Gemini Market Data error:", error);
-    return tickers.reduce((acc, t) => ({ ...acc, [t]: { price: 150, change: 0.5, sector: 'Technology' } }), {});
+    return marketData; // Return what we have if AI fails
   }
 };
 
