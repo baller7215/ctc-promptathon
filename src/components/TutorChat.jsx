@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Sparkles } from 'lucide-react';
 import { chatWithTutor } from '../lib/agents';
 
-const TutorChat = ({ portfolio }) => {
+const TutorChat = ({ portfolio, triggerQuery }) => {
   const [messages, setMessages] = useState([
-    { role: 'bot', text: 'Hi! I\'m your Gemini investing tutor. Ask me anything about your portfolio or investing basics!' }
+    { role: 'assistant', content: "Hi! I'm your Gemini investing tutor. Ask me anything about your portfolio or investing basics!" }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -16,23 +16,33 @@ const TutorChat = ({ portfolio }) => {
     }
   }, [messages]);
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || isTyping) return;
+  useEffect(() => {
+    if (triggerQuery) {
+      handleSend(triggerQuery);
+    }
+  }, [triggerQuery]);
 
-    const userMessage = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
+  const handleSend = async (text = input) => {
+    const messageToSend = typeof text === 'string' ? text : input;
+    if (!messageToSend.trim() || isTyping) return;
+
+    const newMessages = [...messages, { role: 'user', content: messageToSend }];
+    setMessages(newMessages);
     setInput('');
     setIsTyping(true);
 
-    const response = await chatWithTutor(portfolio, input, messages);
-    
-    setMessages(prev => [...prev, { role: 'bot', text: response }]);
-    setIsTyping(false);
+    try {
+      const response = await chatWithTutor(portfolio, messageToSend, messages);
+      setMessages([...newMessages, { role: 'assistant', content: response }]);
+    } catch (error) {
+      setMessages([...newMessages, { role: 'assistant', content: "I'm having trouble connecting to my brain right now. Please try again!" }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
-    <div className="dash-card flex flex-col h-[320px] overflow-hidden">
+    <div className="dash-card flex flex-col h-[500px] overflow-hidden">
       <div className="p-4 border-b border-brand-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-brand-accent fill-brand-dark" />
@@ -63,7 +73,13 @@ const TutorChat = ({ portfolio }) => {
         )}
       </div>
 
-      <form onSubmit={handleSend} className="p-3 border-t border-brand-border flex gap-2">
+      <form 
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSend();
+        }} 
+        className="p-4 border-t border-brand-border flex gap-2 bg-white"
+      >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

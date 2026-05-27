@@ -8,7 +8,7 @@ import {
 import { 
   TrendingUp, TrendingDown, DollarSign, 
   Briefcase, ArrowUpRight, ArrowDownRight, 
-  Sparkles, Info 
+  Sparkles, Info, ArrowRight 
 } from 'lucide-react';
 import { analyzePortfolio } from '../lib/agents';
 import TutorChat from '../components/TutorChat';
@@ -187,7 +187,7 @@ const Dashboard = ({ portfolio, onReset }) => {
         <div className="lg:col-span-2 space-y-10">
           <div className="dash-card p-8">
             <SectionHeader title="Portfolio performance" />
-            <div className="h-64 mt-4">
+            <div className="h-80 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={performanceData}>
                   <defs>
@@ -205,24 +205,21 @@ const Dashboard = ({ portfolio, onReset }) => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-10">
-             <div className="dash-card p-6 border-l-8 border-brand-accent">
-              <h3 className="text-sm font-bold text-brand-gray-dark mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-brand-dark" /> AI Insights
-              </h3>
-              <p className="text-md leading-relaxed text-brand-dark italic">
-                "{analysis.beginnerExplanation}"
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {analysis.learningTopics.slice(0, 2).map((topic, i) => (
-                  <span key={i} className="text-[10px] bg-brand-gray px-2 py-1 rounded-full uppercase tracking-widest font-black text-brand-gray-dark">
-                    {topic}
-                  </span>
-                ))}
-              </div>
+          <div className="dash-card p-8 bg-brand-accent/5 border-none">
+            <h3 className="text-sm font-black text-brand-accent mb-4 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 fill-brand-accent" /> AI Insight Snapshot
+            </h3>
+            <p className="text-xl font-bold text-brand-dark italic leading-relaxed">
+              "{analysis.beginnerExplanation}"
+            </p>
+            <div className="mt-6">
+              <button 
+                onClick={() => document.querySelector('div[onClick*="pilot"]').click()}
+                className="text-xs font-black text-brand-accent hover:underline flex items-center gap-1"
+              >
+                Go to AI Pilot for deep learning <ArrowRight size={14} />
+              </button>
             </div>
-
-            <TutorChat portfolio={portfolio} />
           </div>
         </div>
       </div>
