@@ -23,7 +23,7 @@ export const analyzePortfolio = async (portfolioData) => {
     - riskLevel (string: Low, Medium, High, Extreme)
     - strengths (array of strings)
     - concerns (array of strings)
-    - beginnerExplanation (string)
+    - beginnerExplanation (string: A very punchy 1-sentence analogy followed by 3 short bullet points starting with an emoji and a **bold title**)
     - learningTopics (array of strings)
 
     Portfolio JSON:

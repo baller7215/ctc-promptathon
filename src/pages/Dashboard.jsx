@@ -276,9 +276,19 @@ const Dashboard = ({ portfolio, onReset }) => {
             <h3 className="text-sm font-black text-brand-accent mb-4 flex items-center gap-2">
               <Sparkles className="w-4 h-4 fill-brand-accent" /> AI Insight Snapshot
             </h3>
-            <p className="text-xl font-bold text-brand-dark italic leading-relaxed">
-              "{analysis.beginnerExplanation}"
-            </p>
+            <div className="space-y-4">
+              {analysis.beginnerExplanation.split('\n').filter(l => l.trim() !== '').map((line, idx) => {
+                const isMainAnalogy = idx === 0;
+                
+                return (
+                  <div key={idx} className={`${isMainAnalogy ? 'text-xl mb-6 text-brand-dark font-black italic' : 'p-4 bg-white/50 backdrop-blur-sm border border-brand-border rounded-xl shadow-sm'}`}>
+                    {line.split('**').map((part, i) => (
+                      i % 2 === 1 ? <strong key={i} className="font-extrabold text-brand-accent">{part}</strong> : part
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
             <div className="mt-6">
               <button 
                 onClick={() => document.querySelector('div[onClick*="pilot"]').click()}
