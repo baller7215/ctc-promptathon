@@ -63,7 +63,7 @@ const DashboardLayout = ({ children, onBack, activeTab, onTabChange }) => {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-bold text-brand-dark">InvestEd Student</p>
+                <p className="text-sm font-bold text-brand-dark">PortfolioPilot Student</p>
                 <p className="text-xs text-brand-dark opacity-60">portfolio@pilot.ai</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-white border border-brand-border overflow-hidden p-1 shadow-sm">

@@ -53,12 +53,18 @@ const TutorChat = ({ portfolio, triggerQuery }) => {
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[90%] p-3 rounded-2xl text-xs leading-relaxed ${
+            <div className={`max-w-[90%] p-3 rounded-2xl text-[11px] leading-relaxed ${
               m.role === 'user' 
                 ? 'bg-brand-dark text-white rounded-tr-none' 
-                : 'bg-brand-gray text-brand-dark rounded-tl-none font-medium text-[11px]'
+                : 'bg-brand-gray text-brand-dark rounded-tl-none font-medium'
             }`}>
-              {m.text}
+              {m.content.split('\n').map((line, blockIdx) => (
+                <p key={blockIdx} className={line.trim().startsWith('*') || line.trim().startsWith('-') ? 'ml-2 mb-1' : 'mb-2 last:mb-0'}>
+                  {line.split('**').map((part, i) => (
+                    i % 2 === 1 ? <strong key={i} className="font-black text-brand-accent">{part}</strong> : part
+                  ))}
+                </p>
+              ))}
             </div>
           </div>
         ))}
