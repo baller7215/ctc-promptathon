@@ -49,12 +49,16 @@ export const analyzePortfolio = async (portfolioData) => {
 export const chatWithTutor = async (portfolioContext, userQuestion, messages = []) => {
   // Safety Pre-check
   const safetyPrompt = `
-    You are a financial safety reviewer.
-    Review the following user question: "${userQuestion}"
-    If the user is asking for specific stock tips, price predictions, or "what should I buy today", explain that as an AI, you provide educational information only and cannot give financial advice.
+    You are a financial safety reviewer for a student education app.
     
-    If the question is safe and educational, respond with "SAFE".
-    Otherwise, respond with a polite educational disclaimer.
+    The user is asking: "${userQuestion}"
+    
+    Rules for your review:
+    1. If the user asks for a specific "BUY", "SELL", or "HOLD" recommendation, or asks for a price prediction (e.g., "Will Apple hit $200?"), it is UNSAFE.
+    2. If the user asks to explain a concept (diversification, risk, ETFs) OR asks for an educational analysis of their OWN holdings (e.g., "Why is my portfolio risky?"), it is SAFE.
+    
+    If it is SAFE, respond ONLY with the word "SAFE".
+    If it is UNSAFE, respond with a friendly educational disclaimer explaining that you can teach concepts but cannot give direct trade advice.
   `;
 
   try {
@@ -66,7 +70,7 @@ export const chatWithTutor = async (portfolioContext, userQuestion, messages = [
     }
 
     const prompt = `
-      You are an investing tutor for college students named "InvestEd AI". Your job is to teach investing concepts clearly and safely.
+      You are an investing tutor for college students named "PortfolioPilot". Your job is to teach investing concepts clearly and safely.
 
       Rules:
       - Do not tell users exactly what stock to buy or sell.

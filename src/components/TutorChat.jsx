@@ -32,53 +32,50 @@ const TutorChat = ({ portfolio }) => {
   };
 
   return (
-    <div className="glass-card rounded-3xl overflow-hidden flex flex-col h-[500px]">
-      <div className="p-4 bg-primary-600 text-white flex items-center justify-between">
+    <div className="dash-card flex flex-col h-[320px] overflow-hidden">
+      <div className="p-4 border-b border-brand-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5" />
-          <span className="font-bold">AI Tutor Chat</span>
+          <Sparkles className="w-4 h-4 text-brand-lime fill-brand-dark" />
+          <span className="text-xs font-black uppercase tracking-widest">AI Tutor</span>
         </div>
       </div>
       
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-3 rounded-2xl flex gap-3 ${
+            <div className={`max-w-[90%] p-3 rounded-2xl text-xs leading-relaxed ${
               m.role === 'user' 
-                ? 'bg-primary-600 text-white rounded-tr-none' 
-                : 'bg-white border border-slate-100 text-slate-800 rounded-tl-none'
+                ? 'bg-brand-dark text-white rounded-tr-none' 
+                : 'bg-brand-gray text-brand-dark rounded-tl-none font-medium text-[11px]'
             }`}>
-              {m.role === 'bot' && <Bot className="w-4 h-4 shrink-0 mt-1" />}
-              <p className="text-sm leading-relaxed">{m.text}</p>
+              {m.text}
             </div>
           </div>
         ))}
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-white border border-slate-100 p-3 rounded-2xl rounded-tl-none">
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-bounce delay-100"></div>
-                <div className="w-1.5 h-1.5 bg-primary-600 rounded-full animate-bounce delay-200"></div>
-              </div>
+            <div className="bg-brand-gray p-2 rounded-xl rounded-tl-none flex gap-1">
+              <div className="w-1 h-1 bg-brand-dark rounded-full animate-bounce"></div>
+              <div className="w-1 h-1 bg-brand-dark rounded-full animate-bounce delay-75"></div>
+              <div className="w-1 h-1 bg-brand-dark rounded-full animate-bounce delay-150"></div>
             </div>
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSend} className="p-4 bg-white border-t border-slate-100 flex gap-2">
+      <form onSubmit={handleSend} className="p-3 border-t border-brand-border flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question..."
-          className="flex-1 px-4 py-2 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-primary-500 outline-none text-sm"
+          placeholder="Ask something..."
+          className="flex-1 px-3 py-2 rounded-xl bg-brand-gray focus:outline-none text-xs"
         />
         <button 
           type="submit"
-          className="p-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50"
+          className="p-2 bg-brand-lime text-brand-dark rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
           disabled={!input.trim() || isTyping}
         >
-          <Send className="w-5 h-5" />
+          <Send size={14} />
         </button>
       </form>
     </div>

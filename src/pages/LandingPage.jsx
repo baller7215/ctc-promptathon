@@ -4,66 +4,65 @@ import { TrendingUp, BookOpen, ShieldCheck, PieChart } from 'lucide-react';
 
 const LandingPage = ({ onGetStarted }) => {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative min-h-screen bg-brand-gray overflow-hidden">
       {/* Background blobs */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-primary-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 -right-4 w-72 h-72 bg-accent-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-0 -left-4 w-96 h-96 bg-brand-lime rounded-full mix-blend-multiply filter blur-[120px] opacity-30 animate-blob"></div>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-32 relative">
         <div className="text-center">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight"
+            className="text-6xl md:text-8xl font-black tracking-tighter text-brand-dark"
           >
-            <span className="block">Understand your </span>
-            <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-600">Investments</span>
+            <span className="block italic">Secure your </span>
+            <span className="block bg-brand-lime px-4 py-2 inline-block -rotate-1">Future.</span>
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mt-6 max-w-2xl mx-auto text-xl text-slate-600"
+            className="mt-8 max-w-xl mx-auto text-lg text-brand-gray-dark font-medium leading-relaxed"
           >
-            InvestEd AI helps students analyze portfolios, understand risk, and learn investing basics with Gemini-powered explanations.
+            PortfolioPilot helps students navigate the complex world of investing with Gemini-powered insights and professional-grade visualizations.
           </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-10 flex justify-center gap-4"
+            className="mt-12 flex justify-center gap-6"
           >
             <button
               onClick={onGetStarted}
-              className="px-8 py-4 bg-primary-600 text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-primary-700 transition-all hover:scale-105"
+              className="px-10 py-5 bg-brand-dark text-white rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl flex items-center gap-3"
             >
-              Get Started
+              Get Started <TrendingUp className="w-6 h-6 text-brand-lime" />
             </button>
             <button
-              className="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-md border border-slate-200 hover:bg-slate-50 transition-all"
+              className="px-10 py-5 bg-white text-brand-dark rounded-2xl font-bold text-lg shadow-soft border border-brand-border hover:bg-brand-gray transition-all"
             >
               Learn More
             </button>
           </motion.div>
         </div>
 
-        <div className="mt-32 grid md:grid-cols-3 gap-8">
+        <div className="mt-40 grid md:grid-cols-3 gap-10">
           <FeatureCard 
-            icon={<PieChart className="w-8 h-8 text-primary-500" />}
-            title="Portfolio Analysis"
-            description="Deep dive into your diversification and sector exposure."
+            icon={<PieChart className="w-8 h-8 text-brand-dark" />}
+            title="Smarter Analysis"
+            description="Professional metrics simplified for student portfolios."
           />
           <FeatureCard 
-            icon={<ShieldCheck className="w-8 h-8 text-accent-500" />}
-            title="Risk Education"
-            description="Understand what 'risk' actually means for your specific holdings."
+            icon={<ShieldCheck className="w-8 h-8 text-brand-dark" />}
+            title="Risk Radar"
+            description="Visualizing the true risk of your holdings in real-time."
           />
           <FeatureCard 
-            icon={<BookOpen className="w-8 h-8 text-primary-500" />}
-            title="AI Tutor"
-            description="Ask our Gemini-powered tutor anything about your investments."
+            icon={<BookOpen className="w-8 h-8 text-brand-dark" />}
+            title="AI Copilot"
+            description="A dedicated Gemini tutor to guide your financial literacy journey."
           />
         </div>
       </main>
@@ -73,14 +72,14 @@ const LandingPage = ({ onGetStarted }) => {
 
 const FeatureCard = ({ icon, title, description }) => (
   <motion.div 
-    whileHover={{ y: -5 }}
-    className="glass-card p-8 rounded-3xl"
+    whileHover={{ y: -10 }}
+    className="dash-card p-10 hover:border-brand-lime transition-colors"
   >
-    <div className="bg-white/50 w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm mb-6">
+    <div className="bg-brand-lime/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
       {icon}
     </div>
-    <h3 className="text-xl font-bold mb-2">{title}</h3>
-    <p className="text-slate-600">{description}</p>
+    <h3 className="text-xl font-black mb-3">{title}</h3>
+    <p className="text-brand-gray-dark text-sm leading-relaxed font-medium">{description}</p>
   </motion.div>
 );
 

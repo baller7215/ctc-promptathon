@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trash2, Plus, ArrowRight, Play } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, ArrowRight, Play, Wallet } from 'lucide-react';
 import { DEMO_PORTFOLIOS, STOCKS_METADATA } from '../data/mockData';
 
 const PortfolioInput = ({ onBack, onAnalyze }) => {
@@ -44,96 +44,105 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <button onClick={onBack} className="mb-8 flex items-center text-slate-500 hover:text-slate-900 transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Landing
-      </button>
+    <div className="min-h-screen bg-brand-gray py-20 px-6">
+      <div className="max-w-4xl mx-auto">
+        <button onClick={onBack} className="mb-12 flex items-center text-brand-gray-dark hover:text-brand-dark transition-colors font-bold text-sm">
+          <ArrowLeft className="w-4 h-4 mr-2" /> EXIT TO LANDING
+        </button>
 
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-4">Choose a Demo Portfolio</h2>
-        <div className="grid sm:grid-cols-3 gap-4">
-          {DEMO_PORTFOLIOS.map(demo => (
-            <button
-              key={demo.id}
-              onClick={() => loadDemo(demo)}
-              className="glass-card p-6 rounded-2xl text-left hover:border-primary-400 border border-transparent transition-all group"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="font-bold text-lg">{demo.name}</h3>
-                <Play className="w-5 h-5 text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <p className="text-sm text-slate-500">{demo.description}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="glass-card p-8 rounded-3xl">
-        <h2 className="text-2xl font-bold mb-6">Or Enter Manually</h2>
-        
-        <div className="flex flex-wrap gap-4 mb-8">
-          <input
-            type="text"
-            placeholder="Ticker (e.g. AAPL)"
-            value={newTicker}
-            onChange={(e) => setNewTicker(e.target.value)}
-            className="flex-1 min-w-[200px] px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none"
-          />
-          <input
-            type="number"
-            placeholder="Shares"
-            value={newShares}
-            onChange={(e) => setNewShares(e.target.value)}
-            className="w-32 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none"
-          />
-          <button
-            onClick={addHolding}
-            className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" /> Add
-          </button>
-        </div>
-
-        <div className="space-y-3 mb-8">
-          <AnimatePresence>
-            {holdings.map((h, i) => (
-              <motion.div
-                key={`${h.ticker}-${i}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-slate-100"
-              >
-                <div>
-                  <span className="font-bold text-primary-600 mr-2">{h.ticker}</span>
-                  <span className="text-slate-500">{h.name}</span>
-                  <span className="mx-2 text-slate-300">|</span>
-                  <span className="text-slate-600">{h.shares} shares</span>
-                </div>
-                <button
-                  onClick={() => removeHolding(i)}
-                  className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {holdings.length === 0 && (
-            <div className="text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl">
-              No holdings added yet.
+        <div className="mb-16">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-brand-dark rounded-xl flex items-center justify-center">
+              <Wallet className="w-6 h-6 text-brand-lime" />
             </div>
+            <h2 className="text-3xl font-black tracking-tight">Select a Template</h2>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {DEMO_PORTFOLIOS.map(demo => (
+              <button
+                key={demo.id}
+                onClick={() => loadDemo(demo)}
+                className="dash-card p-6 text-left hover:border-brand-dark border-2 border-transparent transition-all group relative overflow-hidden"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="font-black text-sm uppercase tracking-wider">{demo.name}</h3>
+                  <Play className="w-4 h-4 text-brand-lime fill-brand-dark opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <p className="text-xs text-brand-gray-dark leading-relaxed font-medium">{demo.description}</p>
+                <div className="absolute bottom-0 left-0 h-1 bg-brand-lime w-0 group-hover:w-full transition-all duration-300"></div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="dash-card p-10">
+          <h2 className="text-2xl font-black mb-8">Build Custom Portfolio</h2>
+          
+          <div className="flex flex-wrap gap-4 mb-10">
+            <input
+              type="text"
+              placeholder="TICKER (e.g. AAPL)"
+              value={newTicker}
+              onChange={(e) => setNewTicker(e.target.value)}
+              className="flex-1 min-w-[200px] px-5 py-4 rounded-xl bg-brand-gray border-none focus:ring-2 focus:ring-brand-dark outline-none font-bold text-sm"
+            />
+            <input
+              type="number"
+              placeholder="SHARES"
+              value={newShares}
+              onChange={(e) => setNewShares(e.target.value)}
+              className="w-32 px-5 py-4 rounded-xl bg-brand-gray border-none focus:ring-2 focus:ring-brand-dark outline-none font-bold text-sm"
+            />
+            <button
+              onClick={addHolding}
+              className="px-8 py-4 bg-brand-dark text-white rounded-xl font-black text-sm hover:scale-105 transition-all flex items-center gap-2 shadow-lg"
+            >
+              <Plus className="w-5 h-5 text-brand-lime" /> ADD
+            </button>
+          </div>
+
+          <div className="space-y-4 mb-10">
+            <AnimatePresence>
+              {holdings.map((h, i) => (
+                <motion.div
+                  key={`${h.ticker}-${i}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex items-center justify-between p-5 bg-brand-gray rounded-xl group border border-transparent hover:border-brand-border"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="font-black text-lg text-brand-dark bg-brand-lime px-3 py-1 rounded-lg">{h.ticker}</span>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-brand-dark">{h.name}</span>
+                      <span className="text-xs text-brand-gray-dark">{h.shares} units · {h.sector}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeHolding(i)}
+                    className="p-2 text-brand-gray-dark hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+            {holdings.length === 0 && (
+              <div className="text-center py-16 text-brand-gray-dark border-2 border-dashed border-brand-border rounded-2xl font-bold italic">
+                Your hanger is empty. Add a stock or choose a template to begin.
+              </div>
+            )}
+          </div>
+
+          {holdings.length > 0 && (
+            <button
+              onClick={() => onAnalyze(holdings)}
+              className="w-full py-5 bg-brand-lime text-brand-dark rounded-2xl font-black text-xl hover:bg-brand-dark hover:text-white transition-all shadow-xl flex items-center justify-center gap-3"
+            >
+              LIFT OFF <ArrowRight className="w-6 h-6" />
+            </button>
           )}
         </div>
-
-        {holdings.length > 0 && (
-          <button
-            onClick={() => onAnalyze(holdings)}
-            className="w-full py-4 bg-primary-600 text-white rounded-2xl font-bold text-lg hover:bg-primary-700 transition-all shadow-lg flex items-center justify-center gap-2"
-          >
-            Analyze Portfolio <ArrowRight className="w-5 h-5" />
-          </button>
-        )}
       </div>
     </div>
   );

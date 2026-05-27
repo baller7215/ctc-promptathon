@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import PortfolioInput from './pages/PortfolioInput';
 import Dashboard from './pages/Dashboard';
+import DashboardLayout from './components/DashboardLayout';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing');
@@ -33,11 +34,13 @@ function App() {
       )}
 
       {currentPage === 'dashboard' && (
-        <Dashboard 
-          portfolio={portfolio} 
-          onBack={() => setCurrentPage('input')}
-          onReset={reset}
-        />
+        <DashboardLayout onBack={reset}>
+          <Dashboard 
+            portfolio={portfolio} 
+            onBack={() => setCurrentPage('input')}
+            onReset={reset}
+          />
+        </DashboardLayout>
       )}
     </div>
   );
