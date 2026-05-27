@@ -13,10 +13,10 @@ import {
 import { analyzePortfolio } from '../lib/agents';
 import TutorChat from '../components/TutorChat';
 
-const COLORS = ['#d4ff59', '#1a1a1a', '#8e8e93', '#e5e5e7'];
+const COLORS = ['#7c3aed', '#1a1a1a', '#8e8e93', '#e5e5e7'];
 
 const KPICard = ({ title, value, change, icon, isLighter = false }) => (
-  <div className={`p-6 rounded-2xl flex flex-col justify-between h-40 ${isLighter ? 'bg-brand-lime text-brand-dark' : 'bg-white border border-brand-border shadow-soft'}`}>
+  <div className={`p-6 rounded-2xl flex flex-col justify-between h-40 ${isLighter ? 'bg-brand-accent text-white' : 'bg-white border border-brand-border shadow-soft'}`}>
     <div className="flex justify-between items-start">
       <div className={`p-2 rounded-lg ${isLighter ? 'bg-white/30' : 'bg-brand-gray'}`}>
         {icon}
@@ -96,7 +96,7 @@ const Dashboard = ({ portfolio, onReset }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32">
-        <div className="w-16 h-16 border-4 border-brand-lime border-t-brand-dark rounded-full animate-spin mb-6"></div>
+        <div className="w-16 h-16 border-4 border-brand-accent border-t-brand-dark rounded-full animate-spin mb-6"></div>
         <p className="text-xl font-black">Decrypting your portfolio...</p>
         <p className="text-brand-gray-dark">Fetching live market data via Gemini</p>
       </div>
@@ -192,21 +192,21 @@ const Dashboard = ({ portfolio, onReset }) => {
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#d4ff59" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#d4ff59" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#7c3aed" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="name" hide />
                   <YAxis hide />
                   <Tooltip />
-                  <Area type="monotone" dataKey="value" stroke="#d4ff59" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
+                  <Area type="monotone" dataKey="value" stroke="#7c3aed" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-10">
-             <div className="dash-card p-6 border-l-8 border-brand-lime">
+             <div className="dash-card p-6 border-l-8 border-brand-accent">
               <h3 className="text-sm font-bold text-brand-gray-dark mb-4 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-brand-dark" /> AI Insights
               </h3>

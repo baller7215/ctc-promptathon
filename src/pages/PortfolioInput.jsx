@@ -53,7 +53,7 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-brand-dark rounded-xl flex items-center justify-center">
-              <Wallet className="w-6 h-6 text-brand-lime" />
+              <Wallet className="w-6 h-6 text-brand-accent" />
             </div>
             <h2 className="text-3xl font-black tracking-tight">Select a Template</h2>
           </div>
@@ -66,10 +66,10 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
               >
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-black text-sm uppercase tracking-wider">{demo.name}</h3>
-                  <Play className="w-4 h-4 text-brand-lime fill-brand-dark opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Play className="w-4 h-4 text-brand-accent fill-brand-dark opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <p className="text-xs text-brand-gray-dark leading-relaxed font-medium">{demo.description}</p>
-                <div className="absolute bottom-0 left-0 h-1 bg-brand-lime w-0 group-hover:w-full transition-all duration-300"></div>
+                <div className="absolute bottom-0 left-0 h-1 bg-brand-accent w-0 group-hover:w-full transition-all duration-300"></div>
               </button>
             ))}
           </div>
@@ -97,7 +97,7 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
               onClick={addHolding}
               className="px-8 py-4 bg-brand-dark text-white rounded-xl font-black text-sm hover:scale-105 transition-all flex items-center gap-2 shadow-lg"
             >
-              <Plus className="w-5 h-5 text-brand-lime" /> ADD
+              <Plus className="w-5 h-5 text-brand-accent" /> ADD
             </button>
           </div>
 
@@ -112,7 +112,7 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
                   className="flex items-center justify-between p-5 bg-brand-gray rounded-xl group border border-transparent hover:border-brand-border"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="font-black text-lg text-brand-dark bg-brand-lime px-3 py-1 rounded-lg">{h.ticker}</span>
+                    <span className="font-black text-lg text-white bg-brand-accent px-3 py-1 rounded-lg">{h.ticker}</span>
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-brand-dark">{h.name}</span>
                       <span className="text-xs text-brand-gray-dark">{h.shares} units · {h.sector}</span>
@@ -137,7 +137,7 @@ const PortfolioInput = ({ onBack, onAnalyze }) => {
           {holdings.length > 0 && (
             <button
               onClick={() => onAnalyze(holdings)}
-              className="w-full py-5 bg-brand-lime text-brand-dark rounded-2xl font-black text-xl hover:bg-brand-dark hover:text-white transition-all shadow-xl flex items-center justify-center gap-3"
+              className="w-full py-5 bg-brand-accent text-white rounded-2xl font-black text-xl hover:bg-brand-dark hover:text-white transition-all shadow-xl flex items-center justify-center gap-3"
             >
               LIFT OFF <ArrowRight className="w-6 h-6" />
             </button>

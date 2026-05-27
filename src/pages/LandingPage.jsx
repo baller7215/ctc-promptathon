@@ -6,7 +6,7 @@ const LandingPage = ({ onGetStarted }) => {
   return (
     <div className="relative min-h-screen bg-brand-gray overflow-hidden">
       {/* Background blobs */}
-      <div className="absolute top-0 -left-4 w-96 h-96 bg-brand-lime rounded-full mix-blend-multiply filter blur-[120px] opacity-30 animate-blob"></div>
+      <div className="absolute top-0 -left-4 w-96 h-96 bg-brand-accent rounded-full mix-blend-multiply filter blur-[120px] opacity-30 animate-blob"></div>
       
       <main className="max-w-7xl mx-auto px-6 lg:px-8 py-32 relative">
         <div className="text-center">
@@ -16,7 +16,7 @@ const LandingPage = ({ onGetStarted }) => {
             className="text-6xl md:text-8xl font-black tracking-tighter text-brand-dark"
           >
             <span className="block italic">Secure your </span>
-            <span className="block bg-brand-lime px-4 py-2 inline-block -rotate-1">Future.</span>
+            <span className="block bg-brand-accent text-white px-4 py-2 inline-block -rotate-1">Future.</span>
           </motion.h1>
           
           <motion.p 
@@ -38,7 +38,7 @@ const LandingPage = ({ onGetStarted }) => {
               onClick={onGetStarted}
               className="px-10 py-5 bg-brand-dark text-white rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl flex items-center gap-3"
             >
-              Get Started <TrendingUp className="w-6 h-6 text-brand-lime" />
+              Get Started <TrendingUp className="w-6 h-6 text-brand-accent" />
             </button>
             <button
               className="px-10 py-5 bg-white text-brand-dark rounded-2xl font-bold text-lg shadow-soft border border-brand-border hover:bg-brand-gray transition-all"
@@ -73,9 +73,9 @@ const LandingPage = ({ onGetStarted }) => {
 const FeatureCard = ({ icon, title, description }) => (
   <motion.div 
     whileHover={{ y: -10 }}
-    className="dash-card p-10 hover:border-brand-lime transition-colors"
+    className="dash-card p-10 hover:border-brand-accent transition-colors"
   >
-    <div className="bg-brand-lime/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+    <div className="bg-brand-accent/5 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
       {icon}
     </div>
     <h3 className="text-xl font-black mb-3">{title}</h3>

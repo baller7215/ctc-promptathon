@@ -35,7 +35,7 @@ const TutorChat = ({ portfolio }) => {
     <div className="dash-card flex flex-col h-[320px] overflow-hidden">
       <div className="p-4 border-b border-brand-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-brand-lime fill-brand-dark" />
+          <Sparkles className="w-4 h-4 text-brand-accent fill-brand-dark" />
           <span className="text-xs font-black uppercase tracking-widest">AI Tutor</span>
         </div>
       </div>
@@ -72,7 +72,7 @@ const TutorChat = ({ portfolio }) => {
         />
         <button 
           type="submit"
-          className="p-2 bg-brand-lime text-brand-dark rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
+          className="p-2 bg-brand-accent text-white rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
           disabled={!input.trim() || isTyping}
         >
           <Send size={14} />

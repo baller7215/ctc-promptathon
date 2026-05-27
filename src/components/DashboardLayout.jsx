@@ -17,7 +17,7 @@ const DashboardLayout = ({ children, onBack }) => {
       <aside className="w-64 border-r border-brand-border bg-brand-gray flex flex-col p-6 space-y-8">
         <div className="flex items-center gap-2 px-2">
           <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
-            <LayoutDashboard className="w-5 h-5 text-brand-lime" />
+            <LayoutDashboard className="w-5 h-5 text-brand-accent" />
           </div>
           <span className="text-xl font-black tracking-tighter">PortfolioPilot</span>
         </div>
@@ -49,7 +49,7 @@ const DashboardLayout = ({ children, onBack }) => {
                 <p className="text-xs text-brand-gray-dark">portfolio@pilot.ai</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-white border border-brand-border overflow-hidden p-1">
-                <div className="w-full h-full rounded-full bg-brand-lime flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-brand-accent flex items-center justify-center">
                   <User size={20} className="text-brand-dark" />
                 </div>
               </div>
