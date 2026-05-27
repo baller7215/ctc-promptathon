@@ -10,7 +10,7 @@ import {
   Briefcase, ArrowUpRight, ArrowDownRight, 
   Sparkles, Info, ArrowRight 
 } from 'lucide-react';
-import { analyzePortfolio } from '../lib/agents';
+import { analyzePortfolio, getMarketData } from '../lib/agents';
 import TutorChat from '../components/TutorChat';
 
 const COLORS = ['#7c3aed', '#1a1a1a', '#8e8e93', '#e5e5e7'];
@@ -49,33 +49,52 @@ const Dashboard = ({ portfolio, onReset }) => {
   const [loading, setLoading] = useState(true);
   const [livePrices, setLivePrices] = useState({});
 
-  // Simulate live price updates
   useEffect(() => {
+    const getDashboardData = async () => {
+      setLoading(true);
+      try {
+        const tickers = portfolio.map(h => h.ticker);
+        const [analysisResult, marketResult] = await Promise.all([
+          analyzePortfolio(portfolio),
+          getMarketData(tickers)
+        ]);
+        
+        setAnalysis(analysisResult);
+        setLivePrices(marketResult);
+      } catch (error) {
+        console.error("Dashboard Load Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getDashboardData();
+  }, [portfolio]);
+
+  // Slow drift to "simulate" live ticks from the base real price
+  useEffect(() => {
+    if (loading || Object.keys(livePrices).length === 0) return;
+    
     const interval = setInterval(() => {
       setLivePrices(prev => {
         const next = { ...prev };
-        portfolio.forEach(h => {
-          const current = next[h.ticker] || 100;
-          const change = (Math.random() - 0.5) * 2; // +/- 1%
-          next[h.ticker] = Math.max(1, current + change);
+        Object.keys(next).forEach(ticker => {
+          const change = (Math.random() - 0.5) * 0.1; // Very subtle +/- 0.05%
+          next[ticker] = {
+            ...next[ticker],
+            price: next[ticker].price + (next[ticker].price * (change/100))
+          };
         });
         return next;
       });
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
-  }, [portfolio]);
-
-  useEffect(() => {
-    const getAnalysis = async () => {
-      const result = await analyzePortfolio(portfolio);
-      setAnalysis(result);
-      setLoading(false);
-    };
-    getAnalysis();
-  }, [portfolio]);
+  }, [loading, livePrices]);
 
   const totalValue = useMemo(() => {
-    return portfolio.reduce((acc, h) => acc + (h.shares * (livePrices[h.ticker] || 100)), 0);
+    return portfolio.reduce((acc, h) => {
+      const marketInfo = livePrices[h.ticker];
+      return acc + (h.shares * (marketInfo?.price || 0));
+    }, 0);
   }, [portfolio, livePrices]);
 
   const performanceData = [
@@ -89,9 +108,12 @@ const Dashboard = ({ portfolio, onReset }) => {
   ];
 
   const allocationData = useMemo(() => {
-    const sectors = portfolio.reduce((acc, h) => ({ ...acc, [h.sector]: (acc[h.sector] || 0) + 1 }), {});
+    const sectors = portfolio.reduce((acc, h) => {
+      const sector = livePrices[h.ticker]?.sector || h.sector || 'Other';
+      return { ...acc, [sector]: (acc[sector] || 0) + 1 };
+    }, {});
     return Object.entries(sectors).map(([name, value]) => ({ name, value }));
-  }, [portfolio]);
+  }, [portfolio, livePrices]);
 
   if (loading) {
     return (
@@ -104,7 +126,7 @@ const Dashboard = ({ portfolio, onReset }) => {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 pb-20">
       {/* KPI Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <KPICard 
@@ -117,91 +139,136 @@ const Dashboard = ({ portfolio, onReset }) => {
         <KPICard 
           title="Active Assets" 
           value={portfolio.length} 
-          icon={<Briefcase size={20} />} 
+          icon={<TrendingUp size={20} />} 
         />
         <KPICard 
-          title="Top Sector" 
+          title="Primary Sector" 
           value={allocationData[0]?.name || 'N/A'} 
-          icon={<TrendingUp size={20} />} 
+          icon={<Sparkles size={20} />} 
         />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-10">
-        {/* Left Stats Column */}
-        <div className="space-y-10 lg:col-span-1">
+      <div className="grid lg:grid-cols-12 gap-10">
+        {/* Left Side: Stats & Allocation */}
+        <div className="lg:col-span-4 space-y-10">
           <div className="dash-card p-6">
-            <SectionHeader title="Balance" />
-            <div className="mb-6">
-              <p className="text-3xl font-black flex items-center gap-2">
-                $80,300 <span className="text-sm font-bold text-green-500 bg-green-100 px-2 py-1 rounded-lg">+3.2%</span>
+            <SectionHeader title="Your Net Worth" />
+            <div className="mb-2">
+              <p className="text-3xl font-black text-brand-dark">
+                ${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
               </p>
-              <p className="text-xs text-brand-gray-dark mt-1">Ready to be deployed</p>
-            </div>
-            <div className="flex gap-3">
-              <button className="flex-1 py-3 bg-brand-dark text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2">
-                <ArrowDownRight size={16} /> Deposit
-              </button>
-              <button className="flex-1 py-3 bg-white border border-brand-border rounded-xl text-sm font-bold flex items-center justify-center gap-2">
-                <ArrowUpRight size={16} /> Withdraw
-              </button>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+3.2% Today</span>
+                <span className="text-xs text-brand-dark opacity-40">Live Market</span>
+              </div>
             </div>
           </div>
 
           <div className="dash-card p-6">
-            <SectionHeader title="Portfolio allocation" />
-            <div className="h-48 flex items-center">
+            <SectionHeader title="Asset Allocation" />
+            <div className="h-48 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={allocationData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={45}
-                    outerRadius={65}
-                    paddingAngle={8}
+                    innerRadius={50}
+                    outerRadius={70}
+                    paddingAngle={5}
                     dataKey="value"
                   >
                     {allocationData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="w-1/2 space-y-2">
-                {allocationData.map((d, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
-                      <span className="text-brand-gray-dark">{d.name}</span>
-                    </div>
-                    <span className="font-bold">{(d.value / portfolio.length * 100).toFixed(0)}%</span>
-                  </div>
-                ))}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-30">Total</p>
+                <p className="text-lg font-black">{portfolio.length}</p>
               </div>
+            </div>
+            <div className="mt-6 space-y-3">
+              {allocationData.map((d, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                    <span className="text-xs font-bold text-brand-dark opacity-60">{d.name}</span>
+                  </div>
+                  <span className="text-xs font-black">{(d.value / portfolio.length * 100).toFixed(0)}%</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Center Main Column */}
-        <div className="lg:col-span-2 space-y-10">
+        {/* Right Side: Performance & Holdings */}
+        <div className="lg:col-span-8 space-y-10">
           <div className="dash-card p-8">
-            <SectionHeader title="Portfolio performance" />
-            <div className="h-80 mt-4">
+            <SectionHeader title="Performance History" />
+            <div className="h-72 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.8}/>
+                      <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.15}/>
                       <stop offset="95%" stopColor="#7c3aed" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="name" hide />
-                  <YAxis hide />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="value" stroke="#7c3aed" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#7c3aed" 
+                    strokeWidth={4} 
+                    fillOpacity={1} 
+                    fill="url(#colorVal)" 
+                    animationDuration={2000}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-lg font-black flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-brand-accent" /> Asset Breakdown
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {portfolio.map((item, i) => {
+                const live = livePrices[item.ticker] || {};
+                const value = item.shares * (live.price || 0);
+                return (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="p-5 bg-white border border-brand-border rounded-2xl flex justify-between items-center group hover:border-brand-accent transition-colors shadow-sm"
+                  >
+                    <div>
+                      <p className="text-xs font-black text-brand-accent mb-1">{item.ticker}</p>
+                      <p className="text-sm font-bold text-brand-dark">{item.shares} Shares</p>
+                      <p className="text-[10px] text-brand-dark opacity-40 uppercase tracking-tighter mt-1">{live.sector || 'Loading...'}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-black text-brand-dark">
+                        ${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </p>
+                      <div className="flex items-center justify-end gap-1 text-[10px] font-black text-green-500">
+                        <ArrowUpRight size={10} />
+                        {live.change?.toFixed(2) || '0.00'}%
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 

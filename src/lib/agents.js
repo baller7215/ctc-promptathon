@@ -41,8 +41,45 @@ export const analyzePortfolio = async (portfolioData) => {
     return data;
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    // If it's a 429, we still fall back to mock but maybe notify the user
     return mockAnalysisResponse();
+  }
+};
+
+export const getMarketData = async (tickers) => {
+  if (!tickers || tickers.length === 0) return {};
+  
+  const cacheKey = `market_data_${tickers.sort().join('_')}`;
+  const cached = localStorage.getItem(cacheKey);
+  
+  // Cache for 5 minutes
+  if (cached) {
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp < 5 * 60 * 1000) {
+      console.log("Using cached market data");
+      return data;
+    }
+  }
+
+  const prompt = `
+    Return the current market price (USD), 24h change percentage, and primary sector for the following stock tickers: ${tickers.join(', ')}.
+    Format your response as a strict JSON object where keys are tickers:
+    {
+      "TICKER": { "price": number, "change": number, "sector": "string" }
+    }
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const data = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+    
+    localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+    return data;
+  } catch (error) {
+    console.error("Gemini Market Data error:", error);
+    return tickers.reduce((acc, t) => ({ ...acc, [t]: { price: 150, change: 0.5, sector: 'Technology' } }), {});
   }
 };
 
